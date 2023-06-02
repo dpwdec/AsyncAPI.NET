@@ -1,7 +1,3 @@
-using System;
-using LEGO.AsyncAPI.Models.Any;
-using BindingsCollection = LEGO.AsyncAPI.Bindings.BindingsCollection;
-
 namespace LEGO.AsyncAPI.Tests.Bindings.Sns
 {
     using NUnit.Framework;
@@ -11,6 +7,7 @@ namespace LEGO.AsyncAPI.Tests.Bindings.Sns
     using LEGO.AsyncAPI.Bindings.Sns;
     using LEGO.AsyncAPI.Models;
     using LEGO.AsyncAPI.Readers;
+    using LEGO.AsyncAPI.Models.Any;
 
     internal class SnsBindings_Should
     {
@@ -57,36 +54,24 @@ namespace LEGO.AsyncAPI.Tests.Bindings.Sns
                         new Statement()
                         {
                             Effect = Effect.Deny,
-                            Principal = new StringOrStringList()
-                            {
-                                StringValue = "arn:aws:iam::123456789012:user/alex.wichmann",
-                            },
-                            Action = new StringOrStringList()
-                            {
-                                StringList = new List<string>()
+                            Principal = new AsyncApiString("arn:aws:iam::123456789012:user/alex.wichmann"),
+                            Action = new AsyncApiArray
                                 {
-                                    "sns:Publish",
-                                    "sns:Delete",
-                                },
-                            },
+                                    new AsyncApiString("sns:Publish"),
+                                    new AsyncApiString("sns:Delete")
+                                }
                         },
                         new Statement()
                         {
                             Effect = Effect.Allow,
-                            Principal = new StringOrStringList()
+                            Principal = new AsyncApiArray
                             {
-                                StringList = new List<string>()
-                                {
-                                    "arn:aws:iam::123456789012:user/alex.wichmann",
-                                    "arn:aws:iam::123456789012:user/dec.kolakowski",
-                                },
+                                    new AsyncApiString("arn:aws:iam::123456789012:user/alex.wichmann"),
+                                    new AsyncApiString("arn:aws:iam::123456789012:user/dec.kolakowski")
                             },
-                            Action = new StringOrStringList()
-                            {
-                                StringValue = "sns:Create",
-                            },
-                        },
-                    },
+                            Action = new AsyncApiString("sns:Create")
+                        }
+                    }
                 },
                 Tags = new Dictionary<string, string>()
                 {

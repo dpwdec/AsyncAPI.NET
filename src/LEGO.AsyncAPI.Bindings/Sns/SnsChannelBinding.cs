@@ -1,14 +1,12 @@
 namespace LEGO.AsyncAPI.Bindings.Sns
 {
-    using LEGO.AsyncAPI.Models.Interfaces;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using LEGO.AsyncAPI.Bindings;
-    using LEGO.AsyncAPI.Models;
     using LEGO.AsyncAPI.Readers.ParseNodes;
     using LEGO.AsyncAPI.Writers;
-    using YamlDotNet.Core.Tokens;
+    using LEGO.AsyncAPI.Models.Any;
+    using LEGO.AsyncAPI.Models.Interfaces;
 
     /// <summary>
     /// Binding class for SNS channel settings.
@@ -59,23 +57,30 @@ namespace LEGO.AsyncAPI.Bindings.Sns
         private static FixedFieldMap<Statement> statementFixedFields = new()
         {
             { "effect", (a, n) => { a.Effect = n.GetScalarValue().GetEnumFromDisplayName<Effect>(); } },
-            { "principal", (a, n) => { a.Principal = LoadStringOrStringList(n, "principal"); } },
-            { "action", (a, n) => { a.Action = LoadStringOrStringList(n, "action"); } },
+            { "principal", (a, n) => { a.Principal = LoadAsyncApiAny(n, "principal"); } },
+            { "action", (a, n) => { a.Action = LoadAsyncApiAny(n, "action"); } },
         };
     
-        public static StringOrStringList LoadStringOrStringList(ParseNode node, string nodeName)
+        public static IAsyncApiAny LoadAsyncApiAny(ParseNode node, string nodeName)
         {
-            var stringOrStringList = new StringOrStringList();
             if (node is ValueNode)
             {
-                stringOrStringList.StringValue = node.GetScalarValue();
-            }
-            else
-            {
-                stringOrStringList.StringList = node.CreateSimpleList(s => s.GetScalarValue());
+                return new AsyncApiString(node.GetScalarValue());
             }
 
-            return stringOrStringList;
+            if (node is ListNode)
+            {
+                var nodes = node.CreateSimpleList(s => s.GetScalarValue());
+                var result = new AsyncApiArray();
+                foreach (var s in nodes)
+                {
+                    result.Add(new AsyncApiString(s));
+                }
+
+                return result;
+            }
+
+            throw new ArgumentException($"Node should be ValueNode or ListNode. Node name: {nodeName}.");
         }
 
         /// <inheritdoc/>

@@ -10,7 +10,7 @@ namespace LEGO.AsyncAPI.Readers.ParseNodes
     using LEGO.AsyncAPI.Models.Any;
     using LEGO.AsyncAPI.Models.Interfaces;
 
-    public static class AsyncApiAnyConverter
+    internal static class AsyncApiAnyConverter
     {
         public static IAsyncApiAny GetSpecificAsyncApiAny(IAsyncApiAny asyncApiAny, AsyncApiSchema schema = null)
         {

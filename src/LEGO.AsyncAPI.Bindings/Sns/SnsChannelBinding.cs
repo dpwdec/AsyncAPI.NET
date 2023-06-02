@@ -57,31 +57,9 @@ namespace LEGO.AsyncAPI.Bindings.Sns
         private static FixedFieldMap<Statement> statementFixedFields = new()
         {
             { "effect", (a, n) => { a.Effect = n.GetScalarValue().GetEnumFromDisplayName<Effect>(); } },
-            { "principal", (a, n) => { a.Principal = LoadAsyncApiAny(n, "principal"); } },
-            { "action", (a, n) => { a.Action = LoadAsyncApiAny(n, "action"); } },
+            { "principal", (a, n) => { a.Principal = LoadStringOrStringList<PrincipalObject>(n); } },
+            { "action", (a, n) => { a.Action = LoadStringOrStringList<ActionObject>(n); } },
         };
-    
-        public static IAsyncApiAny LoadAsyncApiAny(ParseNode node, string nodeName)
-        {
-            if (node is ValueNode)
-            {
-                return new AsyncApiString(node.GetScalarValue());
-            }
-
-            if (node is ListNode)
-            {
-                var nodes = node.CreateSimpleList(s => s.GetScalarValue());
-                var result = new AsyncApiArray();
-                foreach (var s in nodes)
-                {
-                    result.Add(new AsyncApiString(s));
-                }
-
-                return result;
-            }
-
-            throw new ArgumentException($"Node should be ValueNode or ListNode. Node name: {nodeName}.");
-        }
 
         /// <inheritdoc/>
         public override void SerializeProperties(IAsyncApiWriter writer)
@@ -97,6 +75,30 @@ namespace LEGO.AsyncAPI.Bindings.Sns
             writer.WriteOptionalObject("policy", this.Policy, (w, t) => t.Serialize(w));
             writer.WriteOptionalMap("tags", this.Tags, (w, t) => w.WriteValue(t));
             writer.WriteEndObject();
+        }
+        
+        private static T LoadStringOrStringList<T>(ParseNode node)
+            where T : StringOrStringList
+        {
+            switch (node)
+            {
+                case ValueNode:
+                    return new StringOrStringList(new AsyncApiString(node.GetScalarValue())) as T;
+                case ListNode:
+                {
+                    var nodes = node.CreateSimpleList(s => s.GetScalarValue());
+                    var result = new AsyncApiArray();
+                    foreach (var s in nodes)
+                    {
+                        result.Add(new AsyncApiString(s));
+                    }
+
+                    return new StringOrStringList(result) as T;
+                }
+
+                default:
+                    throw new ArgumentOutOfRangeException($"An error occured while loading the {nameof(T)}. Node should be ValueNode or ListNode.");
+            }
         }
     }
 }

@@ -54,22 +54,22 @@ namespace LEGO.AsyncAPI.Tests.Bindings.Sns
                         new Statement()
                         {
                             Effect = Effect.Deny,
-                            Principal = new AsyncApiString("arn:aws:iam::123456789012:user/alex.wichmann"),
-                            Action = new AsyncApiArray
-                                {
-                                    new AsyncApiString("sns:Publish"),
-                                    new AsyncApiString("sns:Delete")
-                                }
+                            Principal = new PrincipalObject(new AsyncApiString("arn:aws:iam::123456789012:user/alex.wichmann")),
+                            Action = new ActionObject(new AsyncApiArray
+                            {
+                                new AsyncApiString("sns:Publish"),
+                                new AsyncApiString("sns:Delete")
+                            })
                         },
                         new Statement()
                         {
                             Effect = Effect.Allow,
-                            Principal = new AsyncApiArray
+                            Principal = new PrincipalObject(new AsyncApiArray
                             {
-                                    new AsyncApiString("arn:aws:iam::123456789012:user/alex.wichmann"),
-                                    new AsyncApiString("arn:aws:iam::123456789012:user/dec.kolakowski")
-                            },
-                            Action = new AsyncApiString("sns:Create")
+                                new AsyncApiString("arn:aws:iam::123456789012:user/alex.wichmann"),
+                                new AsyncApiString("arn:aws:iam::123456789012:user/dec.kolakowski")
+                            }),
+                            Action = new ActionObject(new AsyncApiString("sns:Create"))
                         }
                     }
                 },

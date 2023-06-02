@@ -14,12 +14,12 @@ namespace LEGO.AsyncAPI.Bindings.Sns
         /// The AWS account or resource ARN that this statement applies to.
         /// </summary>
         // public StringOrStringList Principal { get; set; }
-        public IAsyncApiAny Principal { get; set; }
+        public PrincipalObject Principal { get; set; }
 
         /// <summary>
         /// The SNS permission being allowed or denied e.g. sns:Publish
         /// </summary>
-        public IAsyncApiAny Action { get; set; }
+        public ActionObject Action { get; set; }
 
         public void Serialize(IAsyncApiWriter writer)
         {
@@ -30,8 +30,8 @@ namespace LEGO.AsyncAPI.Bindings.Sns
 
             writer.WriteStartObject();
             writer.WriteRequiredProperty("effect", this.Effect.GetDisplayName());
-            writer.WriteRequiredObject("principal", this.Principal, (w, t) => t.Write(w));
-            writer.WriteRequiredObject("action", this.Action, (w, t) => t.Write(w));
+            writer.WriteRequiredObject("principal", this.Principal, (w, t) => t.Value.Write(w));
+            writer.WriteRequiredObject("action", this.Action, (w, t) => t.Value.Write(w));
             writer.WriteEndObject();
         }
     }

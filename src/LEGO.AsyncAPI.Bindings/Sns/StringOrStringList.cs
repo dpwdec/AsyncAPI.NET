@@ -14,7 +14,7 @@ public class StringOrStringList : IAsyncApiElement
         {
             AsyncApiArray => value,
             AsyncApiPrimitive<string> => value,
-            _ => throw new ArgumentOutOfRangeException($"{nameof(PrincipalObject)} value is invalid.")
+            _ => throw new ArgumentException($"{nameof(StringOrStringList)} value is not valid.")
         };
     }
         

@@ -97,7 +97,7 @@ namespace LEGO.AsyncAPI.Bindings.Sns
                 }
 
                 default:
-                    throw new ArgumentOutOfRangeException($"An error occured while loading the {nameof(T)}. Node should be ValueNode or ListNode.");
+                    throw new ArgumentException($"An error occured while loading the {nameof(T)}. Node should be ValueNode or ListNode.");
             }
         }
     }
